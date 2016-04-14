@@ -178,6 +178,7 @@ def _cmd_iptables(tokens, sls=''):
             if t == '-P':
                 f.append({'chain': next(tokens)})
                 f.append({'policy': next(tokens)})
+                state = 'iptables.set_policy'
             elif t == '-I':
                 f.append({'position': next(tokens)})
                 state = 'iptables.insert'

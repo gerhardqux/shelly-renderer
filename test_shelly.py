@@ -85,7 +85,7 @@ class ShellyTest(unittest.TestCase):
         ))
         res = {
             '.iptables.default drop': {
-                'iptables.append': [
+                'iptables.set_policy': [
                     {'chain': 'INPUT'},
                     {'policy': 'DROP'},
                     {'save': True},
