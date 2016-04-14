@@ -31,7 +31,9 @@ is translated to a declarative datastructure anyway.
 Examples
 --------
 
-..code:: bash
+Install influxdb.
+
+.. code-block:: bash
 
     #!shelly
 
@@ -48,7 +50,8 @@ Examples
     systemctl start influxdb
     systemctl enable influxdb
 
-That's all.
+That's all. Nice, and concise.
+
 
 TODO
 ----
