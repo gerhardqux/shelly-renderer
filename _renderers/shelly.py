@@ -32,6 +32,7 @@ import shlex
 import re
 import sys
 import yaml
+import collections
 
 from salt.ext.six import string_types
 from salt.exceptions import SaltRenderError
@@ -287,7 +288,7 @@ def render(data, saltenv='base', sls='', **kws):
 
     :rtype: A Python data structure
     '''
-    result = {}
+    result = collections.OrderedDict()
 
     if not isinstance(data, string_types):
         data = data.read()
