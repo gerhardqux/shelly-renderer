@@ -1,8 +1,13 @@
 Shelly renderer for Salt
 ========================
 
-Create salt states with a shell like syntax. States are commonly written in
-yaml, which is easy, but places a limit on functionality and flexibility.
+Create salt states with a shell like syntax.
+
+.. image:: https://travis-ci.org/gerhardqux/shelly-renderer.svg?branch=master
+       :target: https://travis-ci.org/gerhardqux/shelly-renderer
+
+States are commonly written in yaml, which is easy,
+but places a limit on functionality and flexibility.
 To gain more functionality and flexibility, you can template your yaml
 using jinja2, at the cost of easyness. You can go one step further, and
 obtain maximum functionality and flexibility by writing your states in python.
