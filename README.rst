@@ -60,6 +60,38 @@ Lock yourself out.
 
 That's all. Nice, and concise. Secretly declarative.
 
+Installation
+------------
+
+Clone this repository
+
+.. code:: bash
+
+    git clone https://github.com/gerhardqux/shelly-renderer/ /srv/shelly-renderer
+
+Put in in your file_roots list on your salt-master.
+
+.. code:: bash
+
+    cat >> /etc/salt/master << EOF
+    file_roots:
+      base:
+        - /srv/salt
+        - /srv/shelly-renderer
+    EOF
+
+Restart the salt-master:
+
+.. code:: bash
+
+    systemctl restart salt-master
+
+Send the new renderer to your minions.
+
+.. code:: bash
+
+    salt '*' saltutil.sync_all
+
 
 TODO
 ----
