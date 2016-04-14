@@ -22,3 +22,37 @@ Shelly expects imperative form (e.g. install this package) instead of
 declarative form (e.g. this package should be installed). This is really
 an illusion for the user who is accustomed to shell scripts. Every line
 is translated to a declarative datastructure anyway.
+
+Examples
+--------
+
+..code:: bash
+
+    #!shelly
+
+    yum install -y influxdb
+    mkdir -m 0755 /var/lib/influxdb
+    chown influxdb:influxdb /var/lib/influxdb
+
+    curl salt://influxdb/files/config.toml.jinja | jinja > /etc/influxdb/config.toml
+    chown root:root /etc/influxdb/config.toml
+    chmod 0644 /etc/influxdb/config.toml
+
+    useradd -d /opt/influxdb -s /bin/bash -c InfluxDBServiceUser influxdb
+
+    systemctl start influxdb
+    systemctl enable influxdb
+
+That's all.
+
+TODO
+----
+
+missing:
+
+ * for loops
+ * cfg dict from pillar
+ * if statements
+ * examples
+ * pydoc
+ * sane pipe renderer
