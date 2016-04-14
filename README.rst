@@ -50,7 +50,7 @@ Install influxdb.
     systemctl start influxdb
     systemctl enable influxdb
 
-That's all. Nice, and concise.
+That's all. Nice, and concise. Secretly declarative.
 
 
 TODO
@@ -61,6 +61,5 @@ missing:
  * for loops
  * cfg dict from pillar
  * if statements
- * examples
  * pydoc
  * sane pipe renderer
