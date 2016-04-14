@@ -319,7 +319,7 @@ def render(data, saltenv='base', sls='', **kws):
 
 def main():
     if len(sys.argv) != 2:
-        print 'Please specify one filename on the command line.'
+        sys.stderr.write('Please specify one filename on the command line.')
         sys.exit(1)
     filename = sys.argv[1]
     data = file(filename, 'rt').read()
