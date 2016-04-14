@@ -120,11 +120,11 @@ def _cmd_curl(tokens, sls=''):
     tokens = iter(tokens)
     try:
         while True:
-            t = tokens.next()
+            t = next(tokens)
             if t == '|':
-                file_mngd.append({'template': tokens.next()})
+                file_mngd.append({'template': next(tokens)})
             elif t == '>':
-                file_name = tokens.next()
+                file_name = next(tokens)
                 file_mngd.append({'name': file_name})
                 sid = _generate_sid(sls, 'file', file_name)
             else:
@@ -146,13 +146,13 @@ def _cmd_useradd(tokens, sls=''):
     tokens = iter(tokens)
     try:
         while True:
-            t = tokens.next()
+            t = next(tokens)
             if t == '-d':
-                u.append({'home': tokens.next()})
+                u.append({'home': next(tokens)})
             elif t == '-s':
-                u.append({'shell': tokens.next()})
+                u.append({'shell': next(tokens)})
             elif t == '-c':
-                u.append({'fullname': tokens.next()})
+                u.append({'fullname': next(tokens)})
             else:
                 u.append({'name': t})
                 sid = _generate_sid(sls, 'user', t)
@@ -174,28 +174,28 @@ def _cmd_iptables(tokens, sls=''):
     tokens = iter(tokens)
     try:
         while True:
-            t = tokens.next()
+            t = next(tokens)
             if t == '-P':
-                f.append({'chain': tokens.next()})
-                f.append({'policy': tokens.next()})
+                f.append({'chain': next(tokens)})
+                f.append({'policy': next(tokens)})
             elif t == '-I':
-                f.append({'position': tokens.next()})
+                f.append({'position': next(tokens)})
                 state = 'iptables.insert'
             elif t == '-A':
-                f.append({'chain': tokens.next()})
+                f.append({'chain': next(tokens)})
             elif t == '-s':
-                f.append({'source': tokens.next()})
+                f.append({'source': next(tokens)})
             elif t == '--connstate':
-                f.append({'connstate': tokens.next()})
+                f.append({'connstate': next(tokens)})
             elif t == '--dport':
-                f.append({'dport': tokens.next()})
+                f.append({'dport': next(tokens)})
             elif t == '--proto':
-                f.append({'proto': tokens.next()})
+                f.append({'proto': next(tokens)})
             elif t == '--match':
-                f.append({'match': tokens.next().split(',')})
+                f.append({'match': next(tokens).split(',')})
             elif t == '--comment':
                 f.append({'save': True})
-                sid = _generate_sid(sls, 'iptables', tokens.next())
+                sid = _generate_sid(sls, 'iptables', next(tokens))
     except StopIteration:
         if not sid:
             raise SaltRenderError(
@@ -322,7 +322,7 @@ def main():
         sys.stderr.write('Please specify one filename on the command line.')
         sys.exit(1)
     filename = sys.argv[1]
-    data = file(filename, 'rt').read()
+    data = open(filename, 'rt').read()
     yaml.dump(render(data), sys.stdout)
 
 if __name__ == '__main__':
