@@ -50,6 +50,14 @@ Install influxdb.
     systemctl start influxdb
     systemctl enable influxdb
 
+Lock yourself out.
+
+.. code-block:: bash
+
+    #!shelly
+
+    iptables -P INPUT DROP --comment "lock myself out"
+
 That's all. Nice, and concise. Secretly declarative.
 
 
