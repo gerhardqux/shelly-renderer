@@ -22,6 +22,10 @@ Shelly expects imperative form (e.g. install this package) instead of
 declarative form (e.g. this package should be installed). This is really
 an illusion for the user who is accustomed to shell scripts. Every line
 is translated to a declarative datastructure anyway.
+
+:maintainer: Gerhard Muntingh <gerhard@qux.nl>
+:maturity: new
+:platform: all
 '''
 
 from __future__ import absolute_import
@@ -40,15 +44,20 @@ from salt.exceptions import SaltRenderError
 log = logging.getLogger(__name__)
 
 
-def _generate_sid(sls, state_mod, id):
-    if state_mod == 'mkdir':
-        state_mod = 'file'
-    if state_mod == 'yum':
-        state_mod = 'pkg'
-    return "{0}.{1}.{2}".format(sls, state_mod, id)
-
-
 def _cmd_pkg(tokens, sls=''):
+    '''
+    Generate package installation resources.
+
+    Installation of packages can be performed using:
+
+    .. code-block:
+
+        yum install <package>...
+
+    Currently only pkg.installed is supported.
+
+    :rtype: dict
+    '''
     # grep everything that looks like a word
     packages = [p for p in tokens[1:] if re.search(r'^[a-zA-Z0-9]\w+$', p)]
 
@@ -65,6 +74,17 @@ def _cmd_pkg(tokens, sls=''):
 
 
 def _cmd_mkdir(tokens, sls=''):
+    '''
+    Generate directory resources.
+
+    Directories can be created using:
+
+    .. code-block:
+
+        mkdir [-m <mode>] <dir>...
+
+    :rtype: dict
+    '''
     dirmode = None
     if tokens[0] == '-m':
         dirmode = {'mode': tokens[1]}
@@ -89,6 +109,17 @@ def _cmd_mkdir(tokens, sls=''):
 
 
 def _cmd_chown(tokens, sls=''):
+    '''
+    Modify the owner of files or directories.
+
+    The owner of files and directories can be set using:
+
+    .. code-block:
+
+        chown user.group <file/directory>...
+
+    :rtype: dict
+    '''
     match = re.match(r'^(\w+)[:\.](\w+)$', tokens[0])
     if not match:
         raise SaltRenderError(
@@ -115,6 +146,29 @@ def _cmd_chown(tokens, sls=''):
 
 
 def _cmd_curl(tokens, sls=''):
+    '''
+    Retrieve remote files using curl.
+
+    Files can be run through a template using the pipe syntax.
+
+    Example:
+
+    .. code-block:
+
+        curl salt://dir/file.j2 | jinja2 > /tmp/file
+
+    Permissions and ownership can be set using extra commands:
+
+    .. code-block:
+
+        chmod 0644 /tmp/file
+        chown user:group /tmp/file
+
+    Shelly will merge these into a single resource based in the
+    salt id (.file./tmp/file).
+
+    :rtype: dict
+    '''
     resources = {}
     file_mngd = []
     tokens = iter(tokens)
@@ -141,6 +195,24 @@ def _cmd_curl(tokens, sls=''):
 
 
 def _cmd_useradd(tokens, sls=''):
+    '''
+    Create users using useradd.
+
+    Example:
+
+    .. code-block:
+
+        # create the user influxdb
+        useradd -d /opt/influxdb -s /bin/bash -c InfluxDBServiceUser influxdb
+
+    The usual useradd commands apply.
+
+      * -d to specify the users home dir
+      * -s to specify the users shell
+      * -c to specify the comment or full name
+
+    :rtype: dict
+    '''
     resources = {}
     u = []
     tokens = iter(tokens)
@@ -258,7 +330,96 @@ def all_resources(state):
             result.append({modn[0]: rname})
 
 
+def _generate_sid(sls, state_mod, id):
+    '''
+    Generate a predictable salt id for a resource.
+
+    Shell scripts perform multiple actions to the same resource using
+    multiple commands. Saltstack creates a single resource for these
+    different commands. E.g.
+
+    .. code-block:
+
+        wget http://example.org/file.txt
+        chown user:group file.txt
+        chmod 0644 file.txt
+
+    Becomes:
+
+    .. code-block:
+
+        .file.file.txt:
+          file.managed
+            - source: http://example.org/file.txt
+            - user: user
+            - group: group
+            - mode: 0644
+
+    The wget, chown, and chmod commands all generate the same salt id,
+    and these will be merged (in the merge_resources function) into a
+    single resource.
+
+    :rtype: string
+    '''
+    if state_mod == 'mkdir':
+        state_mod = 'file'
+    if state_mod == 'yum':
+        state_mod = 'pkg'
+    return "{0}.{1}.{2}".format(sls, state_mod, id)
+
+
 def merge_resources(src, dest):
+    '''
+    Merge a resource into an existing resources dict.
+
+    The render function returns a big ordered dict with all the
+    defined resources in it. This function adds a resource to
+    that dict.
+
+    .. code-block:
+
+        src = {
+            '.svc.postfix': {
+                'service.enabled': [
+                    {'name': 'postfix'},
+                ]
+            }
+        }
+        dest = {
+            '.svc.dovecot': {
+                'service.enabled': [
+                    {'name': 'dovecot'},
+                ]
+            },
+        }
+
+    Becomes:
+
+    .. code-block:
+
+        dest = {
+            '.svc.postfix': {
+                'service.enabled': [
+                    {'name': 'postfix'},
+                ]
+            },
+            '.svc.dovecot': {
+                'service.enabled': [
+                    {'name': 'dovecot'},
+                ]
+            },
+        }
+
+    There are some special rules that ensure existing resources, which all
+    have the same salt id, get merged into each other.
+
+    As described in the _generate_sid function:
+
+    The wget, chown, and chmod commands all generate the same salt id,
+    and these will be merged into a single resource.
+
+    :rtype: dict
+    '''
     for key, value in src.items():
         # No match, easy merge
         if key not in dest:
