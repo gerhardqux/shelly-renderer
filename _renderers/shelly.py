@@ -50,7 +50,7 @@ def _cmd_pkg(tokens, sls=''):
 
     Installation of packages can be performed using:
 
-    .. code-block:
+    .. code-block:: bash
 
         yum install <package>...
 
@@ -79,7 +79,7 @@ def _cmd_mkdir(tokens, sls=''):
 
     Directories can be created using:
 
-    .. code-block:
+    .. code-block:: bash
 
         mkdir [-m <mode>] <dir>...
 
@@ -114,7 +114,7 @@ def _cmd_chown(tokens, sls=''):
 
     The owner of files and directories can be set using:
 
-    .. code-block:
+    .. code-block:: bash
 
         chown user.group <file/directory>...
 
@@ -153,13 +153,13 @@ def _cmd_curl(tokens, sls=''):
 
     Example:
 
-    .. code-block:
+    .. code-block:: bash
 
         curl salt://dir/file.j2 | jinja2 > /tmp/file
 
     Permissions and ownership can be set using extra commands:
 
-    .. code-block:
+    .. code-block:: bash
 
         chmod 0644 /tmp/file
         chown user:group /tmp/file
@@ -200,7 +200,7 @@ def _cmd_useradd(tokens, sls=''):
 
     Example:
 
-    .. code-block:
+    .. code-block:: bash
 
         # create the user influxdb
         useradd -d /opt/influxdb -s /bin/bash -c InfluxDBServiceUser influxdb
@@ -245,7 +245,7 @@ def _cmd_iptables(tokens, sls=''):
 
     Example:
 
-    .. code-block:
+    .. code-block:: bash
 
         iptables -A INPUT -p tcp --dport 22 -j ACCEPT --comment "Allow SSH"
         iptables -P INPUT DROP --comment "default drop"
@@ -294,7 +294,7 @@ def _cmd_systemctl(tokens, sls=''):
 
     Example:
 
-    .. code-block:
+    .. code-block:: bash
 
         systemctl start influxdb
         systemctl enable influxdb
@@ -331,7 +331,7 @@ def _cmd_ldso(tokens, sls=''):
 
     Example:
 
-    .. code-block:
+    .. code-block:: bash
 
         /bin/echo "Doing stuff"
         /bin/ping -c 4 10.0.0.1
@@ -375,7 +375,7 @@ def _generate_sid(sls, state_mod, id):
     multiple commands. Saltstack creates a single resource for these
     different commands. E.g.
 
-    .. code-block:
+    .. code-block:: bash
 
         wget http://example.org/file.txt
         chown user:group file.txt
@@ -383,7 +383,7 @@ def _generate_sid(sls, state_mod, id):
 
     Becomes:
 
-    .. code-block:
+    .. code-block: yaml
 
         .file.file.txt:
           file.managed
@@ -413,7 +413,7 @@ def merge_resources(src, dest):
     defined resources in it. This function adds a resource to
     that dict.
 
-    .. code-block:
+    .. code-block:: python
 
         src = {
             '.svc.postfix': {
@@ -432,7 +432,7 @@ def merge_resources(src, dest):
 
     Becomes:
 
-    .. code-block:
+    .. code-block:: python
 
         dest = {
             '.svc.postfix': {
@@ -450,10 +450,9 @@ def merge_resources(src, dest):
     There are some special rules that ensure existing resources, which all
     have the same salt id, get merged into each other.
 
-    As described in the _generate_sid function:
-
-    The wget, chown, and chmod commands all generate the same salt id,
-    and these will be merged into a single resource.
+    As described in the _generate_sid function: The wget, chown, and chmod
+    commands all generate the same salt id, and these will be merged into
+    a single resource.
 
     :rtype: dict
     '''
