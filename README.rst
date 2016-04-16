@@ -98,4 +98,4 @@ Send the new renderer to your minions.
 CAVEATS
 -------
 
-A lot... writing imperative syntax in a declarative model is a recipe for confusion.
+A lot... writing imperative grammar in a declarative model is a recipe for confusion.
