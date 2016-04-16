@@ -95,11 +95,7 @@ Send the new renderer to your minions.
     salt '*' saltutil.sync_all
 
 
-TODO
-----
+CAVEATS
+-------
 
-missing:
-
- * cfg dict from pillar
- * if statements
- * sane pipe renderer
+A lot... writing imperative syntax in a declarative model is a recipe for confusion.
