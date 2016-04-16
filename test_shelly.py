@@ -8,7 +8,7 @@ import shelly
 class ShellyTest(unittest.TestCase):
 
     def test_cmd_pkg(self):
-        cmd = shelly._cmd_pkg(['install', 'bar'])
+        cmd = shelly.cmd_pkg(['install', 'bar'])
         res = {
             '.pkg.bar': {
                 'pkg.installed': [
@@ -19,7 +19,7 @@ class ShellyTest(unittest.TestCase):
         self.assertDictEqual(cmd, res)
 
     def test_cmd_mkdir(self):
-        cmd = shelly._cmd_mkdir(shlex.split(
+        cmd = shelly.cmd_mkdir(shlex.split(
             '-m 0750 bar'
         ))
         res = {
@@ -33,7 +33,7 @@ class ShellyTest(unittest.TestCase):
         self.assertDictEqual(cmd, res)
 
     def test_cmd_chown(self):
-        cmd = shelly._cmd_chown(shlex.split(
+        cmd = shelly.cmd_chown(shlex.split(
             'user:group /tmp/bar'
         ))
         res = {
@@ -48,7 +48,7 @@ class ShellyTest(unittest.TestCase):
         self.assertDictEqual(cmd, res)
 
     def test_cmd_curl(self):
-        cmd = shelly._cmd_curl(shlex.split(
+        cmd = shelly.cmd_curl(shlex.split(
             'salt://influxdb/f.j2 | jinja > /tmp/f'
         ))
         res = {
@@ -64,7 +64,7 @@ class ShellyTest(unittest.TestCase):
 
     def test_cmd_useradd(self):
         self.maxDiff = None
-        cmd = shelly._cmd_useradd(shlex.split(
+        cmd = shelly.cmd_useradd(shlex.split(
             '-d /opt/influxdb -s /bin/bash -c InfluxDBServiceUser influxdb'
         ))
         res = {
@@ -80,7 +80,7 @@ class ShellyTest(unittest.TestCase):
         self.assertDictEqual(cmd, res)
 
     def test_cmd_iptables(self):
-        cmd = shelly._cmd_iptables(shlex.split(
+        cmd = shelly.cmd_iptables(shlex.split(
             '-P INPUT DROP --comment "default drop"'
         ))
         res = {
@@ -95,7 +95,7 @@ class ShellyTest(unittest.TestCase):
         self.assertDictEqual(cmd, res)
 
     def test_cmd_systemctl_start(self):
-        cmd = shelly._cmd_systemctl(shlex.split(
+        cmd = shelly.cmd_systemctl(shlex.split(
             'start postfix dovecot'
         ))
         res = {
@@ -113,7 +113,7 @@ class ShellyTest(unittest.TestCase):
         self.assertDictEqual(cmd, res)
 
     def test_cmd_systemctl_enabled(self):
-        cmd = shelly._cmd_systemctl(shlex.split(
+        cmd = shelly.cmd_systemctl(shlex.split(
             'enable postfix dovecot'
         ))
         res = {
@@ -131,7 +131,7 @@ class ShellyTest(unittest.TestCase):
         self.assertDictEqual(cmd, res)
 
     def test_cmd_ldso(self):
-        cmd = shelly._cmd_ldso(['/sbin/foo', 'bar'])
+        cmd = shelly.cmd_ldso(['/sbin/foo', 'bar'])
         self.assertDictEqual(cmd,
                              {'/sbin/foo bar': 'cmd.run'})
 
