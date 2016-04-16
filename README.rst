@@ -98,8 +98,6 @@ TODO
 
 missing:
 
- * for loops
  * cfg dict from pillar
  * if statements
- * pydoc
  * sane pipe renderer

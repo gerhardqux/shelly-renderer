@@ -1,27 +1,7 @@
 '''
 Shelly renderer for Salt
 
-Create salt states with a shell like syntax. States are commonly written in
-yaml, which is easy, but places a limit on functionality and flexibility.
-To gain more functionality and flexibility, you can template your yaml
-using jinja2, at the cost of easyness. You can go one step further, and
-obtain maximum functionality and flexibility by writing your states in python.
-This is even more difficult.
-
-Salt encourages simplicity and thus suggests you gravitate down to yaml as much
-as possible.
-
-Shelly embraces this gravity and trades even more functionality and
-flexibility for ease and simplicity.
-
-Having said that, shelly is no shell, and one soon hits its limits.
-Instead of adding functionality to shelly, you are encouraged to move up
-to yaml+jinja in all but the most basic situations.
-
-Shelly expects imperative form (e.g. install this package) instead of
-declarative form (e.g. this package should be installed). This is really
-an illusion for the user who is accustomed to shell scripts. Every line
-is translated to a declarative datastructure anyway.
+Create salt states with a shell like syntax.
 
 :maintainer: Gerhard Muntingh <gerhard@qux.nl>
 :maturity: new
@@ -44,7 +24,7 @@ from salt.exceptions import SaltRenderError
 log = logging.getLogger(__name__)
 
 
-def _cmd_pkg(tokens, sls=''):
+def cmd_pkg(tokens, sls=''):
     '''
     Generate package installation resources.
 
@@ -56,7 +36,7 @@ def _cmd_pkg(tokens, sls=''):
 
     Currently only pkg.installed is supported.
 
-    :rtype: dict
+    :rtype: A Python data structure
     '''
     # grep everything that looks like a word
     packages = [p for p in tokens[1:] if re.search(r'^[a-zA-Z0-9]\w+$', p)]
@@ -73,7 +53,7 @@ def _cmd_pkg(tokens, sls=''):
     return resources
 
 
-def _cmd_mkdir(tokens, sls=''):
+def cmd_mkdir(tokens, sls=''):
     '''
     Generate directory resources.
 
@@ -83,7 +63,7 @@ def _cmd_mkdir(tokens, sls=''):
 
         mkdir [-m <mode>] <dir>...
 
-    :rtype: dict
+    :rtype: A Python data structure
     '''
     dirmode = None
     if tokens[0] == '-m':
@@ -108,7 +88,7 @@ def _cmd_mkdir(tokens, sls=''):
     return resources
 
 
-def _cmd_chown(tokens, sls=''):
+def cmd_chown(tokens, sls=''):
     '''
     Modify the owner of files or directories.
 
@@ -118,7 +98,7 @@ def _cmd_chown(tokens, sls=''):
 
         chown user.group <file/directory>...
 
-    :rtype: dict
+    :rtype: A Python data structure
     '''
     match = re.match(r'^(\w+)[:\.](\w+)$', tokens[0])
     if not match:
@@ -145,7 +125,7 @@ def _cmd_chown(tokens, sls=''):
     return resources
 
 
-def _cmd_curl(tokens, sls=''):
+def cmd_curl(tokens, sls=''):
     '''
     Retrieve remote files using curl.
 
@@ -167,7 +147,7 @@ def _cmd_curl(tokens, sls=''):
     Shelly will merge these into a single resource based in the
     salt id (.file./tmp/file).
 
-    :rtype: dict
+    :rtype: A Python data structure
     '''
     resources = {}
     file_mngd = []
@@ -194,7 +174,7 @@ def _cmd_curl(tokens, sls=''):
     return resources
 
 
-def _cmd_useradd(tokens, sls=''):
+def cmd_useradd(tokens, sls=''):
     '''
     Create users using useradd.
 
@@ -211,7 +191,7 @@ def _cmd_useradd(tokens, sls=''):
       * -s to specify the users shell
       * -c to specify the comment or full name
 
-    :rtype: dict
+    :rtype: A Python data structure
     '''
     resources = {}
     u = []
@@ -239,7 +219,7 @@ def _cmd_useradd(tokens, sls=''):
     return resources
 
 
-def _cmd_iptables(tokens, sls=''):
+def cmd_iptables(tokens, sls=''):
     '''
     Configure the host firewall using iptables.
 
@@ -250,7 +230,7 @@ def _cmd_iptables(tokens, sls=''):
         iptables -A INPUT -p tcp --dport 22 -j ACCEPT --comment "Allow SSH"
         iptables -P INPUT DROP --comment "default drop"
 
-    :rtype: dict
+    :rtype: A Python data structure
     '''
     state = 'iptables.append'
     sid = None
@@ -288,7 +268,7 @@ def _cmd_iptables(tokens, sls=''):
         return {sid: {state: f}}
 
 
-def _cmd_systemctl(tokens, sls=''):
+def cmd_systemctl(tokens, sls=''):
     '''
     Ensure a service is running, stopped, enabled or disabled.
 
@@ -299,7 +279,7 @@ def _cmd_systemctl(tokens, sls=''):
         systemctl start influxdb
         systemctl enable influxdb
 
-    :rtype: dict
+    :rtype: A Python data structure
     '''
     if tokens[0] == 'start':
         state = 'service.running'
@@ -325,9 +305,11 @@ def _cmd_systemctl(tokens, sls=''):
     return resources
 
 
-def _cmd_ldso(tokens, sls=''):
+def cmd_ldso(tokens, sls=''):
     '''
-    Run a specific command
+    Run a specific command.
+
+    Direct commands are recognized by starting the line with a slash (/).
 
     Example:
 
@@ -337,7 +319,7 @@ def _cmd_ldso(tokens, sls=''):
         /bin/ping -c 4 10.0.0.1
         /bin/echo "Done doing stuff"
 
-    :rtype: dict
+    :rtype: A Python data structure
     '''
     cmd = ' '.join(tokens)
     return {
@@ -346,15 +328,15 @@ def _cmd_ldso(tokens, sls=''):
 
 # Dispatch Table
 dtable = {
-    "yum": _cmd_pkg,
-    "apt-get": _cmd_pkg,
-    "mkdir": _cmd_mkdir,
-    "chown": _cmd_chown,
-    "curl": _cmd_curl,
-    "useradd": _cmd_useradd,
-    "iptables": _cmd_iptables,
-    "systemctl": _cmd_systemctl,
-    "ld.so": _cmd_ldso,
+    "yum": cmd_pkg,
+    "apt-get": cmd_pkg,
+    "mkdir": cmd_mkdir,
+    "chown": cmd_chown,
+    "curl": cmd_curl,
+    "useradd": cmd_useradd,
+    "iptables": cmd_iptables,
+    "systemctl": cmd_systemctl,
+    "ld.so": cmd_ldso,
 }
 
 
@@ -454,7 +436,7 @@ def merge_resources(src, dest):
     commands all generate the same salt id, and these will be merged into
     a single resource.
 
-    :rtype: dict
+    :rtype: A Python data structure
     '''
     for key, value in src.items():
         # No match, easy merge
