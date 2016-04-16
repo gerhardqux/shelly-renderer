@@ -240,6 +240,18 @@ def _cmd_useradd(tokens, sls=''):
 
 
 def _cmd_iptables(tokens, sls=''):
+    '''
+    Configure the host firewall using iptables.
+
+    Example:
+
+    .. code-block:
+
+        iptables -A INPUT -p tcp --dport 22 -j ACCEPT --comment "Allow SSH"
+        iptables -P INPUT DROP --comment "default drop"
+
+    :rtype: dict
+    '''
     state = 'iptables.append'
     sid = None
     f = []
@@ -277,6 +289,18 @@ def _cmd_iptables(tokens, sls=''):
 
 
 def _cmd_systemctl(tokens, sls=''):
+    '''
+    Ensure a service is running, stopped, enabled or disabled.
+
+    Example:
+
+    .. code-block:
+
+        systemctl start influxdb
+        systemctl enable influxdb
+
+    :rtype: dict
+    '''
     if tokens[0] == 'start':
         state = 'service.running'
     elif tokens[0] == 'stop':
@@ -302,6 +326,19 @@ def _cmd_systemctl(tokens, sls=''):
 
 
 def _cmd_ldso(tokens, sls=''):
+    '''
+    Run a specific command
+
+    Example:
+
+    .. code-block:
+
+        /bin/echo "Doing stuff"
+        /bin/ping -c 4 10.0.0.1
+        /bin/echo "Done doing stuff"
+
+    :rtype: dict
+    '''
     cmd = ' '.join(tokens)
     return {
         cmd: 'cmd.run'
