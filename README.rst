@@ -6,6 +6,8 @@ Create salt states with a shell like syntax.
 .. image:: https://travis-ci.org/gerhardqux/shelly-renderer.svg?branch=master
        :target: https://travis-ci.org/gerhardqux/shelly-renderer
 
+Documentation lives at `readthedocs <http://shelly-renderer.readthedocs.org/en/latest/>`_.
+
 States are commonly written in yaml, which is easy,
 but places a limit on functionality and flexibility.
 To gain more functionality and flexibility, you can template your yaml
