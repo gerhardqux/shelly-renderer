@@ -304,6 +304,8 @@ def cmd_systemctl(tokens, sls=''):
         resources[sid] = {state: [
             {'name': s}
         ]}
+        if tokens[0] == 'enable':
+            resources[sid][state].append({'enable': True})
     return resources
 
 
@@ -450,6 +452,9 @@ def merge_resources(src, dest):
         for srcmod, srcvalues in src[key].items():
             if srcmod in dest[key]:
                 destmod = srcmod
+            elif srcmod == 'service.enabled' and \
+                    'service.running' in dest[key]:
+                destmod = 'service.running'
             elif srcmod == 'file.directory' and \
                     'file.managed' in dest[key]:
                 destmod = 'file.managed'

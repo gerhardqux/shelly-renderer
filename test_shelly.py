@@ -135,11 +135,13 @@ class ShellyTest(unittest.TestCase):
             '.svc.postfix': {
                 'service.enabled': [
                     {'name': 'postfix'},
+                    {'enable': True},
                 ]
             },
             '.svc.dovecot': {
                 'service.enabled': [
                     {'name': 'dovecot'},
+                    {'enable': True},
                 ]
             },
         }
