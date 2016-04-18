@@ -330,6 +330,7 @@ def cmd_ldso(tokens, sls=''):
 dtable = {
     "yum": cmd_pkg,
     "apt-get": cmd_pkg,
+    "apt": cmd_pkg,
     "mkdir": cmd_mkdir,
     "chown": cmd_chown,
     "curl": cmd_curl,
