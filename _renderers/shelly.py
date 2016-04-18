@@ -155,7 +155,9 @@ def cmd_curl(tokens, sls=''):
     try:
         while True:
             t = next(tokens)
-            if t == '|':
+            if t == '--hash':
+                file_mngd.append({'source_hash': next(tokens)})
+            elif t == '|':
                 file_mngd.append({'template': next(tokens)})
             elif t == '>':
                 file_name = next(tokens)

@@ -62,6 +62,21 @@ class ShellyTest(unittest.TestCase):
         }
         self.assertDictEqual(cmd, res)
 
+    def test_cmd_curl_hash(self):
+        cmd = shelly.cmd_curl(shlex.split(
+            '--hash sha256=123 salt://influxdb/f.j2 > /tmp/f'
+        ))
+        res = {
+            '.file./tmp/f': {
+                'file.managed': [
+                    {'source_hash': 'sha256=123'},
+                    {'source': 'salt://influxdb/f.j2'},
+                    {'name': '/tmp/f'},
+                ]
+            }
+        }
+        self.assertDictEqual(cmd, res)
+
     def test_cmd_useradd(self):
         self.maxDiff = None
         cmd = shelly.cmd_useradd(shlex.split(
