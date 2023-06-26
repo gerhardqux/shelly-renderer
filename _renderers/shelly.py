@@ -39,7 +39,7 @@ def cmd_pkg(tokens, sls=''):
     :rtype: A Python data structure
     '''
     # grep everything that looks like a word
-    packages = [p for p in tokens[1:] if re.search(r'^[a-zA-Z0-9]\w+$', p)]
+    packages = [p for p in tokens[1:] if re.search(r'^[a-zA-Z0-9_]\w+$', p)]
 
     if len(packages) == 0:
         return (None, None)
