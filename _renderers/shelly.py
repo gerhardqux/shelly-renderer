@@ -486,9 +486,7 @@ def render(data, saltenv='base', sls='', **kws):
     if not data.strip():
         return {}
 
-    lineno = 0
     for line in data.split('\n'):
-        lineno += 1
 
         tokens = shlex.split(line, comments=True)
         if len(tokens):
