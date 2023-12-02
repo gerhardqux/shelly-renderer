@@ -1,4 +1,6 @@
 #!/usr/bin/python
+#
+# pylint: disable-all
 
 import unittest
 import shlex

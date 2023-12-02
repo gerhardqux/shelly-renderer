@@ -15,10 +15,9 @@ import logging
 import shlex
 import re
 import sys
-import yaml
 import collections
+import yaml
 
-from salt.ext.six import string_types
 from salt.exceptions import SaltRenderError
 
 log = logging.getLogger(__name__)
@@ -263,10 +262,10 @@ def cmd_iptables(tokens, sls=''):
             elif t == '--comment':
                 f.append({'save': True})
                 sid = _generate_sid(sls, 'iptables', next(tokens))
-    except StopIteration:
+    except StopIteration as e:
         if not sid:
             raise SaltRenderError(
-                'Shelly requires a rather strict iptables command')
+                'Shelly requires a rather strict iptables command') from e
         return {sid: {state: f}}
 
 
@@ -309,7 +308,7 @@ def cmd_systemctl(tokens, sls=''):
     return resources
 
 
-def cmd_ldso(tokens, sls=''):
+def cmd_ldso(tokens):
     '''
     Run a specific command.
 
@@ -345,16 +344,7 @@ dtable = {
 }
 
 
-def all_resources(state):
-    result = list()
-
-    for rname, mods in state:
-        for modname, _ in mods:
-            modn = modname.split('.')
-            result.append({modn[0]: rname})
-
-
-def _generate_sid(sls, state_mod, id):
+def _generate_sid(sls, state_mod, salt_id):
     '''
     Generate a predictable salt id for a resource.
 
@@ -389,7 +379,8 @@ def _generate_sid(sls, state_mod, id):
         state_mod = 'file'
     if state_mod == 'yum':
         state_mod = 'pkg'
-    return "{0}.{1}.{2}".format(sls, state_mod, id)
+    # pylint: disable=consider-using-f-string
+    return "{0}.{1}.{2}".format(sls, state_mod, salt_id)
 
 
 def merge_resources(src, dest):
@@ -469,6 +460,8 @@ def merge_resources(src, dest):
     return dest
 
 
+# Disable pylint warnings; stay compatible with the "render" function interface
+# pylint: disable=unused-argument
 def render(data, saltenv='base', sls='', **kws):
     '''
     Accepts shelly script as a string or as a file object and translates
@@ -478,7 +471,7 @@ def render(data, saltenv='base', sls='', **kws):
     '''
     result = collections.OrderedDict()
 
-    if not isinstance(data, string_types):
+    if not isinstance(data, str):
         data = data.read()
 
     if data.startswith('#!'):
@@ -489,7 +482,7 @@ def render(data, saltenv='base', sls='', **kws):
     for line in data.split('\n'):
 
         tokens = shlex.split(line, comments=True)
-        if len(tokens):
+        if tokens:
             cmd = tokens[0]
             match = re.match(r'^/(.+)$', line)
             if match:
@@ -504,12 +497,16 @@ def render(data, saltenv='base', sls='', **kws):
 
 
 def main():
+    '''
+    Create salt states with a shell like syntax.
+    '''
     if len(sys.argv) != 2:
         sys.stderr.write('Please specify one filename on the command line.')
         sys.exit(1)
     filename = sys.argv[1]
-    data = open(filename, 'rt').read()
-    yaml.dump(render(data), sys.stdout)
+    with open(filename, 'rt', encoding="utf-8") as fp:
+        data = fp.read()
+        yaml.dump(render(data), sys.stdout)
 
 if __name__ == '__main__':
     main()

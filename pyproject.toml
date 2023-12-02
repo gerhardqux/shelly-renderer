@@ -1,0 +1,28 @@
+[project]
+name = "shelly"
+version = "0.2.0"
+authors = [
+ { name="Gerhard Muntingh", email="gerhard@qux.nl"}
+]
+readme = "README.rst"
+description = "Render shell-like scripts into salt states"
+requires-python = ">=3.6"
+
+dependencies = [
+  'salt',
+  'PyYAML'
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/gerhardqux/shelly-renderer/"
+Issues = "https://github.com/gerhardqux/shelly-renderer/issues"
+
+[options]
+package_dir = "_renderers"
+#py-modules = shelly
+
