@@ -7,6 +7,7 @@
 
 import os
 import sys
+import sphinx_rtd_theme
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
