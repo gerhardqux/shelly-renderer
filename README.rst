@@ -8,7 +8,7 @@ Documentation lives at `readthedocs <http://shelly-renderer.readthedocs.org/en/l
 States are commonly written in yaml, which is easy,
 but places a limit on functionality and flexibility.
 To gain more functionality and flexibility, you can template your yaml
-using jinja2, at the cost of easyness. You can go one step further, and
+using jinja2, at the cost of easiness. You can go one step further, and
 obtain maximum functionality and flexibility by writing your states in python.
 This is even more difficult.
 
