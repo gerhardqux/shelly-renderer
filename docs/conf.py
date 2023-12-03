@@ -21,6 +21,7 @@ author = 'Gerhard Muntingh'
 sys.path.insert(0, os.path.abspath('../_renderers'))
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx_rtd_theme',
 ]
 
 templates_path = ['_templates']
