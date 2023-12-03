@@ -26,3 +26,7 @@ Issues = "https://github.com/gerhardqux/shelly-renderer/issues"
 package_dir = "_renderers"
 #py-modules = shelly
 
+[tool.pytest.ini_options]
+pythonpath = [
+  ".", "_renderers",
+]
